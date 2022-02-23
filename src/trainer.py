@@ -7,6 +7,7 @@ import utility
 import torch
 import torch.nn.utils as utils
 from tqdm import tqdm
+import numpy as np
 
 class Trainer():
     def __init__(self, args, loader, my_model, my_loss, ckp):
@@ -39,15 +40,29 @@ class Trainer():
         timer_data, timer_model = utility.timer(), utility.timer()
         # TEMP
         self.loader_train.dataset.set_scale(0)
+        print('model: \n', self.model)
         for batch, (lr, hr, _,) in enumerate(self.loader_train):
             lr, hr = self.prepare(lr, hr)
             timer_data.hold()
             timer_model.tic()
 
             self.optimizer.zero_grad()
+            cnt = 0 
+            for param_group in self.optimizer.param_groups:
+                st_dev = param_group['lr']
+
             sr = self.model(lr, 0)
             loss = self.loss(sr, hr)
-            loss.backward()
+            loss.backward() #insert noise into the backward pass to match SGLD
+            
+            for layer in self.model.parameters():
+                #layer_shape = layer_weights.shape() 
+                noise = np.random.normal(0, st_dev, list(layer.size())).astype(np.double)
+                noise = torch.from_numpy(noise)
+                layer_weights = torch.sub(layer, noise.float().cuda())
+                #layer.weights = torch.add(layer.weights, random_normal_noise)
+            
+            # maybe read this as well: https://discuss.pytorch.org/t/change-the-gradient-during-backward-pass/121494
             if self.args.gclip > 0:
                 utils.clip_grad_value_(
                     self.model.parameters(),

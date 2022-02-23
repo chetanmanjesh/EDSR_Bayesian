@@ -1,6 +1,7 @@
 from importlib import import_module
 #from dataloader import MSDataLoader
-from torch.utils.data import dataloader
+#from torch.utils.data import dataloader
+import dataloader
 from torch.utils.data import ConcatDataset
 
 # This is a simple wrapper function for ConcatDataset
@@ -22,6 +23,7 @@ class Data:
                 module_name = d if d.find('DIV2K-Q') < 0 else 'DIV2KJPEG'
                 m = import_module('data.' + module_name.lower())
                 datasets.append(getattr(m, module_name)(args, name=d))
+            
 
             self.loader_train = dataloader.DataLoader(
                 MyConcatDataset(datasets),

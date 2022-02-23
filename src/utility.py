@@ -44,6 +44,7 @@ class timer():
 class checkpoint():
     def __init__(self, args):
         self.args = args
+        self.model_save_path = ''
         self.ok = True
         self.log = torch.Tensor()
         now = datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
@@ -51,9 +52,9 @@ class checkpoint():
         if not args.load:
             if not args.save:
                 args.save = now
-            self.dir = os.path.join('..', 'experiment', args.save)
+            self.dir = os.path.join('..', 'experiment/', args.save)
         else:
-            self.dir = os.path.join('..', 'experiment', args.load)
+            self.dir = os.path.join('..', 'experiment/', args.load)
             if os.path.exists(self.dir):
                 self.log = torch.load(self.get_path('psnr_log.pt'))
                 print('Continue from epoch {}...'.format(len(self.log)))
@@ -65,7 +66,7 @@ class checkpoint():
             args.load = ''
 
         os.makedirs(self.dir, exist_ok=True)
-        os.makedirs(self.get_path('model'), exist_ok=True)
+        os.makedirs(self.get_path('model/'), exist_ok=True)
         for d in args.data_test:
             os.makedirs(self.get_path('results-{}'.format(d)), exist_ok=True)
 
@@ -83,7 +84,7 @@ class checkpoint():
         return os.path.join(self.dir, *subdir)
 
     def save(self, trainer, epoch, is_best=False):
-        trainer.model.save(self.get_path('model'), epoch, is_best=is_best)
+        trainer.model.save(self.get_path('model/'), epoch, is_best=is_best)
         trainer.loss.save(self.dir)
         trainer.loss.plot_loss(self.dir, epoch)
 
@@ -188,6 +189,7 @@ def make_optimizer(args, target):
     trainable = filter(lambda x: x.requires_grad, target.parameters())
     kwargs_optimizer = {'lr': args.lr, 'weight_decay': args.weight_decay}
 
+    args.optimizer = 'SGD' #modify this later 
     if args.optimizer == 'SGD':
         optimizer_class = optim.SGD
         kwargs_optimizer['momentum'] = args.momentum
