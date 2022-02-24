@@ -1,4 +1,4 @@
-# EDSR-Bayesian: Adding Bayesian Learning to the Optimization Methods in https://github.com/sanghyun-son/EDSR-PyTorch
+# EDSR-Bayesian: Adding Bayesian Learning to the Optimization Methods  [EDSR-PyTorch] (https://github.com/sanghyun-son/EDSR-PyTorch)
 
 (Rest of the readme is from the same repo). 
 
