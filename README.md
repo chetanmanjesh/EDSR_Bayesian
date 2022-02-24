@@ -1,6 +1,8 @@
-# EDSR-Bayesian: Adding Bayesian Learning to the Optimization Methods  [EDSR-PyTorch] (https://github.com/sanghyun-son/EDSR-PyTorch)
+# EDSR-Bayesian
 
-(Rest of the readme is from the same repo). 
+Adding Bayesian Learning to the Optimization Methods [EDSR-PyTorch](https://github.com/sanghyun-son/EDSR-PyTorch)
+
+(Rest of the readme is from that repository). 
 
 **About PyTorch 1.2.0**
   * Now the master branch supports PyTorch 1.2.0 by default.
