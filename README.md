@@ -1,3 +1,7 @@
+# EDSR-Bayesian: Adding Bayesian Learning to the Optimization Methods in https://github.com/sanghyun-son/EDSR-PyTorch
+
+(Rest of the readme is from the same repo). 
+
 **About PyTorch 1.2.0**
   * Now the master branch supports PyTorch 1.2.0 by default.
   * Due to the serious version problem (especially torch.utils.data.dataloader), MDSR functions are temporarily disabled. If you have to train/evaluate the MDSR model, please use legacy branches.
