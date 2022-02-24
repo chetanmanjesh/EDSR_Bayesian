@@ -66,7 +66,7 @@ class Trainer():
                 st_dev = param_group['lr']
             
             for layer in self.model.parameters():
-                noise = np.random.normal(0, st_dev, list(layer.size())).astype(np.double)
+                noise = np.random.normal(0, st_dev, list(layer.size()))
                 noise = torch.from_numpy(noise)
                 layer_weights = torch.sub(layer, noise.float().cuda())
           
