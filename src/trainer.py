@@ -48,21 +48,11 @@ class Trainer():
 
             self.optimizer.zero_grad()
             cnt = 0 
-            for param_group in self.optimizer.param_groups:
-                st_dev = param_group['lr']
 
             sr = self.model(lr, 0)
             loss = self.loss(sr, hr)
             loss.backward() #insert noise into the backward pass to match SGLD
             
-            for layer in self.model.parameters():
-                #layer_shape = layer_weights.shape() 
-                noise = np.random.normal(0, st_dev, list(layer.size())).astype(np.double)
-                noise = torch.from_numpy(noise)
-                layer_weights = torch.sub(layer, noise.float().cuda())
-                #layer.weights = torch.add(layer.weights, random_normal_noise)
-            
-            # maybe read this as well: https://discuss.pytorch.org/t/change-the-gradient-during-backward-pass/121494
             if self.args.gclip > 0:
                 utils.clip_grad_value_(
                     self.model.parameters(),
@@ -70,6 +60,17 @@ class Trainer():
                 )
             self.optimizer.step()
 
+            # SGLD noise sampling step (equivant to adding noise to the gradient)
+            
+            for param_group in self.optimizer.param_groups:
+                st_dev = param_group['lr']
+            
+            for layer in self.model.parameters():
+                noise = np.random.normal(0, st_dev, list(layer.size())).astype(np.double)
+                noise = torch.from_numpy(noise)
+                layer_weights = torch.sub(layer, noise.float().cuda())
+          
+            
             timer_model.hold()
 
             if (batch + 1) % self.args.print_every == 0:
